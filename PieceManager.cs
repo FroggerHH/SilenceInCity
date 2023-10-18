@@ -1164,7 +1164,7 @@ public static class PiecePrefabManager
     private static readonly Dictionary<string, Piece.PieceCategory> PieceCategories = new();
     private static readonly Dictionary<string, Piece.PieceCategory> OtherPieceCategories = new();
 
-    static PiecePrefabManager()
+    public static void Init()
     {
         Harmony harmony = new("org.bepinex.helpers.PieceManager");
         harmony.Patch(AccessTools.DeclaredMethod(typeof(FejdStartup), nameof(FejdStartup.Awake)),
@@ -1536,12 +1536,18 @@ public static class PiecePrefabManager
     [HarmonyPriority(Priority.Low)]
     private static void Hud_AwakeCreateTabs() { CreateCategoryTabs(); }
 
-    [HarmonyPriority(Priority.VeryHigh), HarmonyWrapSafe]
+    [HarmonyPriority(Priority.VeryHigh), HarmonyPostfix]
     private static void Patch_ZNetSceneAwake(ZNetScene __instance)
     {
+        
         foreach (var prefab in piecePrefabs)
+        {
             if (!__instance.m_prefabs.Contains(prefab))
                 __instance.m_prefabs.Add(prefab);
+            var hashCode = prefab.name.GetStableHashCode();
+            if (!__instance.m_namedPrefabs.ContainsKey(hashCode)) 
+                __instance.m_namedPrefabs.Add(hashCode, prefab);
+        }
     }
 
     [HarmonyPriority(Priority.VeryHigh), HarmonyWrapSafe]

@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using BepInEx;
+﻿using BepInEx;
 using BepInEx.Configuration;
 
 namespace SilenceInCity;
@@ -17,7 +16,7 @@ public class Plugin : BaseUnityPlugin
 
     private void Awake()
     {
-        CreateMod(this, ModName, ModAuthor, ModVersion, ModGUID, true);
+        CreateMod(this, ModName, ModAuthor, ModVersion, ModGUID);
         range = config("General", "Range", 15f, new ConfigDescription("", new AcceptableValueRange<float>(2, 45)));
         OnConfigurationChanged += () =>
         {
